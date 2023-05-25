@@ -1,5 +1,8 @@
+* {
+    background-color: #0d2734;
+}
 .string {
-    color: #1FC3CD;
+    color: #8854e2;
 }
 
 .comment {
@@ -21,22 +24,23 @@
 }
 
 .func_name {
-    color: #0f4c81;
+    /* color: #1a71be; */
+        color: #44e075;
 }
 .variable {
-    color: #7442c8;
+    color: #1FC3CD;
 }
 
 .paren {
-    color: #80c000;
+    color: #f7408c;
 }
 
 .brackets {
-    color: #008000;
+    color: #a71856;
 }
 
 .keys {
-    color: #008000;
+    color: #a71856;
 }
 .punctuation {
     color: #37474f;

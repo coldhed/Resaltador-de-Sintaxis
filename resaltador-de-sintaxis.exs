@@ -55,10 +55,10 @@ defmodule SyntaxHighlighter do
         [~r{^([f]?\'(?:\\\'|.)*?\')}, fn token -> ~s|<span class="string">#{token}</span>| end], # string with single quote
         [~r|^(#.*)|, fn token -> ~s|<span class="comment">#{token}</span>| end], # comment
         [~r{^(and|as|assert|break|class|continue|def|del|elif|else|except|False|finally|for|from|global|if|import|in|is|lambda|None|nonlocal|not|or|pass|raise|return|True|try|while|with|yield)(?:\s|$)}, fn token -> ~s|<span class="reserved_words">#{token}</span>| end ], # reserved keyworkds
-        [~r{^(\+|-|\*|\/|%|\**|\/\/|=|\+=|-=|\*=|\/=|%=|\/\/=|\*\*=|&=|\|=|\^=|>>=|<<=|==|!=|>|<|<=|>=|&|\||~|<<|>>)(?:\s|$)}, fn token -> ~s|<span class="smooth_operator">#{token}</span>| end ], # operators
-        [~r"^([-+]?\d+(?:\.\d+)?(?:e[-+]?\d+)?)(?:\s|$|\,|\)|\]|\}|\:|>|<)", fn token -> ~s|<span class="number">#{token}</span>| end ], # floats and ints, with or without sign, and e notation numbers
+        [~r[^(\+|-|\*|\/|%|\*\*|\/\/|=|\+=|-=|\*=|\/=|%=|\/\/=|\*\*=|&=|\|=|\^=|>>=|<<=|==|!=|>|<|<=|>=|&|\||~|<<|>>){1}], fn token -> ~s|<span class="smooth_operator">#{token}</span>| end ], # operators
+        [~r"^([-+]?\d+(?:\.\d+)?(?:e[-+]?\d+)?)", fn token -> ~s|<span class="number">#{token}</span>| end ], # floats and ints, with or without sign, and e notation numbers
         [~r|^([A-Za-z_ñÑ]{1}[A-Za-z_ñÑ\d]*)\(|, fn token -> ~s|<span class="func_name">#{token}</span>| end ], # function
-        [~r"^([A-Za-z_ñÑ]{1}[A-Za-z_ñÑ\d]*)(?:\s|$|\,|\)|\]|\}|\:|>|<)", fn token -> ~s|<span class="variable">#{token}</span>| end ], # variable
+        [~r"^([A-Za-z_ñÑ]{1}[A-Za-z_ñÑ\d]*)", fn token -> ~s|<span class="variable">#{token}</span>| end ], # variable
         [~r{^([\(\)]+)}, fn token -> ~s|<span class="paren">#{token}</span>| end], # parenthesis
         [~r{^([\[\]]+)}, fn token -> ~s|<span class="brackets">#{token}</span>| end], # brackets
         [~r|^([\{\}]+)|, fn token -> ~s|<span class="keys">#{token}</span>| end], # keys
@@ -72,6 +72,7 @@ defmodule SyntaxHighlighter do
     if Regex.match?(regex, string) do
       [_, group] = Regex.run(regex, string)
 
+      IO.puts String.length(group)
       {String.slice(string, String.length(group)..-1), parserFunc.(group)}
     else
       doToken(string, tail)
