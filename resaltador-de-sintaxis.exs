@@ -47,51 +47,23 @@ defmodule SyntaxHighlighter do
 
   # highlight token takes a string, and searches for the first token in the string, removes it, and parses it
   def token(string),
+
     do:
       doToken(string, [
-        # whitespace
-        [~r|^(\s+)|, fn token -> token end],
-        # string with double quote
-        [~r{^([f]?\"(?:\\\"|.)*?\")}, fn token -> ~s|<span class="string">#{token}</span>| end],
-        # string with single quote
-        [~r{^([f]?\'(?:\\\'|.)*?\')}, fn token -> ~s|<span class="string">#{token}</span>| end],
-        # comment
-        [~r|^(#.*)|, fn token -> ~s|<span class="comment">#{token}</span>| end],
-        # reserved keyworkds
-        [
-          ~r{^(and|as|assert|break|class|continue|def|del|elif|else|except|False|finally|for|from|global|if|import|in|is|lambda|None|nonlocal|not|or|pass|raise|return|True|try|while|with|yield)(?:\s|$)},
-          fn token -> ~s|<span class="reserved_words">#{token}</span>| end
-        ],
-        # operators
-        [
-          ~r{^(\+|-|\*|\/|%|\**|\/\/|=|\+=|-=|\*=|\/=|%=|\/\/=|\*\*=|&=|\|=|\^=|>>=|<<=|==|!=|>|<|<=|>=|&|\||~|<<|>>)(?:\s|$)},
-          fn token -> ~s|<span class="smooth_operator">#{token}</span>| end
-        ],
-        # floats and ints, with or without sign, and e notation numbers
-        [
-          ~r"^([-+]?\d+(?:\.\d+)?(?:e[-+]?\d+)?)(?:\s|$|\,|\)|\]|\}|\:|>|<)",
-          fn token -> ~s|<span class="number">#{token}</span>| end
-        ],
-        # function
-        [
-          ~r|^([A-Za-z_ñÑ]{1}[A-Za-z_ñÑ\d]*)\(|,
-          fn token -> ~s|<span class="func_name">#{token}</span>| end
-        ],
-        # variable
-        [
-          ~r"^([A-Za-z_ñÑ]{1}[A-Za-z_ñÑ\d]*)(?:\s|$|\,|\)|\]|\}|\:|>|<)",
-          fn token -> ~s|<span class="variable">#{token}</span>| end
-        ],
-        # parenthesis
-        [~r{^([\(\)]+)}, fn token -> ~s|<span class="paren">#{token}</span>| end],
-        # brackets
-        [~r{^([\[\]]+)}, fn token -> ~s|<span class="brackets">#{token}</span>| end],
-        # keys
-        [~r|^([\{\}]+)|, fn token -> ~s|<span class="keys">#{token}</span>| end],
-        # punctuation
-        [~r{^(\.|;|:|,)}, fn token -> ~s|<span class="punctuation">#{token}</span>| end],
-        # base case
-        [~r|^(.{1})|, fn token -> token end]
+        [~r|^(\s+)|, fn token -> token end], # whitespace
+        [~r{^([f]?\"(?:\\\"|.)*?\")}, fn token -> ~s|<span class="string">#{token}</span>| end], # string with double quote
+        [~r{^([f]?\'(?:\\\'|.)*?\')}, fn token -> ~s|<span class="string">#{token}</span>| end], # string with single quote
+        [~r|^(#.*)|, fn token -> ~s|<span class="comment">#{token}</span>| end], # comment
+        [~r{^(and|as|assert|break|class|continue|def|del|elif|else|except|False|finally|for|from|global|if|import|in|is|lambda|None|nonlocal|not|or|pass|raise|return|True|try|while|with|yield)(?:\s|$)}, fn token -> ~s|<span class="reserved_words">#{token}</span>| end ], # reserved keyworkds
+        [~r{^(\+|-|\*|\/|%|\**|\/\/|=|\+=|-=|\*=|\/=|%=|\/\/=|\*\*=|&=|\|=|\^=|>>=|<<=|==|!=|>|<|<=|>=|&|\||~|<<|>>)(?:\s|$)}, fn token -> ~s|<span class="smooth_operator">#{token}</span>| end ], # operators
+        [~r"^([-+]?\d+(?:\.\d+)?(?:e[-+]?\d+)?)(?:\s|$|\,|\)|\]|\}|\:|>|<)", fn token -> ~s|<span class="number">#{token}</span>| end ], # floats and ints, with or without sign, and e notation numbers
+        [~r|^([A-Za-z_ñÑ]{1}[A-Za-z_ñÑ\d]*)\(|, fn token -> ~s|<span class="func_name">#{token}</span>| end ], # function
+        [~r"^([A-Za-z_ñÑ]{1}[A-Za-z_ñÑ\d]*)(?:\s|$|\,|\)|\]|\}|\:|>|<)", fn token -> ~s|<span class="variable">#{token}</span>| end ], # variable
+        [~r{^([\(\)]+)}, fn token -> ~s|<span class="paren">#{token}</span>| end], # parenthesis
+        [~r{^([\[\]]+)}, fn token -> ~s|<span class="brackets">#{token}</span>| end], # brackets
+        [~r|^([\{\}]+)|, fn token -> ~s|<span class="keys">#{token}</span>| end], # keys
+        [~r{^(\.|;|:|,)}, fn token -> ~s|<span class="punctuation">#{token}</span>| end], # punctuation
+        [~r|^(.{1})|, fn token -> token end] # base case
       ])
 
   defp doToken(_, []), do: raise("Reached the end of the recursion. Shouldn't be here!")
@@ -100,7 +72,7 @@ defmodule SyntaxHighlighter do
     if Regex.match?(regex, string) do
       [_, group] = Regex.run(regex, string)
 
-      {String.replace_leading(string, group, ""), parserFunc.(group)}
+      {String.slice(string, String.length(group)..-1), parserFunc.(group)}
     else
       doToken(string, tail)
     end
