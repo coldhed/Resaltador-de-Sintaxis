@@ -5,10 +5,33 @@
 # Santiago Rodríguez, A01025232
 
 defmodule SyntaxHighlighter do
-  # def highlight(inFile, outFile \\ "highlight.html") do
-  #   data = File.read!(inFile)
-  #   File.write(outFile, data)
-  # end
+  def highlight(inFile, outFile \\ "highlight.html") do
+    data =
+      inFile
+      |> File.stream!()
+      |> Enum.map(&line(&1))
+      |> Enum.join("")
+
+    prefix = ~s[<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Highlighted Syntax</title>
+</head>
+
+<body>
+    <pre>
+]
+
+    suffix = ~s[    </pre>
+</body>
+
+</html>]
+    File.write(outFile, "#{prefix}#{data}#{suffix}")
+  end
 
   # line takes a string and returns a parsed html string
   def line(string), do: doLine(string, "")
@@ -28,9 +51,9 @@ defmodule SyntaxHighlighter do
         # whitespace
         [~r|^(\s+)|, fn token -> token end],
         # string with double quote
-        [~r|^([f]?\".*\")|, fn token -> ~s|<span class="string">#{token}</span>| end],
+        [~r{^([f]?\"(?:\\\"|.)*?\")}, fn token -> ~s|<span class="string">#{token}</span>| end],
         # string with single quote
-        [~r|^([f]?\'.*\')|, fn token -> ~s|<span class="string">#{token}</span>| end],
+        [~r{^([f]?\'(?:\\\'|.)*?\')}, fn token -> ~s|<span class="string">#{token}</span>| end],
         # comment
         [~r|^(#.*)|, fn token -> ~s|<span class="comment">#{token}</span>| end],
         # reserved keyworkds
@@ -45,7 +68,7 @@ defmodule SyntaxHighlighter do
         ],
         # floats and ints, with or without sign, and e notation numbers
         [
-          ~r<^([-+]?\d+(?:\.\d+)?(?:e[-+]?\d+)?)(?:\s|$)>,
+          ~r"^([-+]?\d+(?:\.\d+)?(?:e[-+]?\d+)?)(?:\s|$|\,|\)|\]|\}|\:|>|<)",
           fn token -> ~s|<span class="number">#{token}</span>| end
         ],
         # function
@@ -55,11 +78,15 @@ defmodule SyntaxHighlighter do
         ],
         # variable
         [
-          ~r<^([A-Za-z_ñÑ]{1}[A-Za-z_ñÑ\d]*)(?:\s|$)>,
+          ~r"^([A-Za-z_ñÑ]{1}[A-Za-z_ñÑ\d]*)(?:\s|$|\,|\)|\]|\}|\:|>|<)",
           fn token -> ~s|<span class="variable">#{token}</span>| end
         ],
         # parenthesis
         [~r{^([\(\)]+)}, fn token -> ~s|<span class="paren">#{token}</span>| end],
+        # brackets
+        [~r{^([\[\]]+)}, fn token -> ~s|<span class="brackets">#{token}</span>| end],
+        # keys
+        [~r|^([\{\}]+)|, fn token -> ~s|<span class="keys">#{token}</span>| end],
         # punctuation
         [~r{^(\.|;|:|,)}, fn token -> ~s|<span class="punctuation">#{token}</span>| end],
         # base case
