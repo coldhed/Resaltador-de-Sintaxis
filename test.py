@@ -1,0 +1,3 @@
+mivañiable = "hola"
+
+print(mivañiable)
