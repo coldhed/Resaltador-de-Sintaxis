@@ -1,0 +1,44 @@
+.string {
+    color: #1FC3CD;
+}
+
+.comment {
+    color: #607d8b;
+}
+
+.reserved_words {
+    color: #fb7efd;
+    font-style: italic;
+    font-weight: bold;
+}
+
+.smooth_operator {
+    color: #fc2847;
+}
+
+.number {
+    color: #ffa343;
+}
+
+.func_name {
+    color: #0f4c81;
+}
+.variable {
+    color: #7442c8;
+}
+
+.paren {
+    color: #80c000;
+}
+
+.brackets {
+    color: #008000;
+}
+
+.keys {
+    color: #008000;
+}
+.punctuation {
+    color: #37474f;
+}
+
