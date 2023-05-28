@@ -72,7 +72,6 @@ defmodule SyntaxHighlighter do
     if Regex.match?(regex, string) do
       [_, group] = Regex.run(regex, string)
 
-      IO.puts String.length(group)
       {String.slice(string, String.length(group)..-1), parserFunc.(group)}
     else
       doToken(string, tail)
