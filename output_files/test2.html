@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Highlighted Syntax</title>
+    <link rel="stylesheet" href="highlight.css">
+</head>
+
+<body>
+    <pre>
+<span class="comment"># Script copied from https://gist.github.com/HiroNakamura/4650385</span>
+<span class="comment">#!/bin/python</span>
+<span class="comment"># coding=utf-8</span>
+
+
+<span class="reserved_words">from</span> <span class="variable">bs4</span> <span class="reserved_words">import</span> <span class="variable">BeautifulSoup</span>
+<span class="reserved_words">import</span> <span class="variable">requests</span>
+<span class="reserved_words">import</span> <span class="variable">pandas</span> <span class="reserved_words">as</span> <span class="variable">pd</span>
+
+<span class="variable">URL</span> <span class="smooth_operator">=</span> <span class="string">"https://resultados.as.com/resultados/futbol/primera/clasificacion/"</span>
+<span class="variable">pagina</span> <span class="smooth_operator">=</span> <span class="variable">requests</span><span class="punctuation">.</span><span class="func_name">get</span><span class="paren">(</span><span class="variable">URL</span><span class="paren">)</span>
+
+<span class="reserved_words">if</span> <span class="variable">pagina</span> <span class="smooth_operator">!=</span> <span class="reserved_words">None</span> <span class="reserved_words">and</span> <span class="variable">pagina</span><span class="punctuation">.</span><span class="variable">ok</span><span class="punctuation">:</span>
+    <span class="func_name">print</span><span class="paren">(</span><span class="string">f"Pagina: {pagina}"</span><span class="paren">)</span>
+    <span class="variable">soup</span> <span class="smooth_operator">=</span> <span class="func_name">BeautifulSoup</span><span class="paren">(</span><span class="variable">pagina</span><span class="punctuation">.</span><span class="variable">content</span><span class="punctuation">,</span><span class="string">"html.parser"</span><span class="paren">)</span>
+    <span class="variable">eq</span> <span class="smooth_operator">=</span> <span class="variable">soup</span><span class="punctuation">.</span><span class="func_name">find_all</span><span class="paren">(</span><span class="string">'span'</span><span class="punctuation">,</span><span class="variable">class_</span><span class="smooth_operator">=</span><span class="string">"nombre-equipo"</span><span class="paren">)</span>
+    <span class="func_name">print</span><span class="paren">(</span><span class="string">f"Equipo: {eq}"</span><span class="paren">)</span>
+    <span class="variable">equipos</span> <span class="smooth_operator">=</span> <span class="brackets">[]</span>
+    <span class="variable">cont</span> <span class="smooth_operator">=</span> <span class="number">0</span>
+    <span class="reserved_words">for</span> <span class="variable">i</span> <span class="reserved_words">in</span> <span class="variable">eq</span><span class="punctuation">:</span>
+        <span class="reserved_words">if</span> <span class="variable">cont</span> <span class="smooth_operator"><</span> <span class="number">20</span><span class="punctuation">:</span>
+            <span class="variable">equipos</span><span class="punctuation">.</span><span class="func_name">append</span><span class="paren">(</span><span class="variable">i</span><span class="punctuation">.</span><span class="variable">text</span><span class="paren">)</span>
+        <span class="variable">else</span><span class="punctuation">:</span>
+            <span class="reserved_words">break</span>
+        <span class="variable">cont</span><span class="smooth_operator">+</span><span class="smooth_operator">=</span><span class="number">1</span>
+    <span class="func_name">print</span><span class="paren">(</span><span class="string">f"Equipos: {equipos}"</span><span class="paren">)</span>
+    <span class="variable">cont</span> <span class="smooth_operator">=</span> <span class="number">0</span>
+    <span class="variable">pt</span> <span class="smooth_operator">=</span> <span class="variable">soup</span><span class="punctuation">.</span><span class="func_name">find_all</span><span class="paren">(</span><span class="string">'td'</span><span class="punctuation">,</span><span class="variable">class_</span><span class="smooth_operator">=</span><span class="string">"destacado"</span><span class="paren">)</span>
+    <span class="variable">puntos</span> <span class="smooth_operator">=</span> <span class="func_name">list</span><span class="paren">()</span>
+    <span class="reserved_words">for</span> <span class="variable">i</span> <span class="reserved_words">in</span> <span class="variable">pt</span><span class="punctuation">:</span>
+        <span class="reserved_words">if</span> <span class="variable">cont</span> <span class="smooth_operator"><</span> <span class="number">20</span><span class="punctuation">:</span>
+            <span class="variable">puntos</span><span class="punctuation">.</span><span class="func_name">append</span><span class="paren">(</span><span class="variable">i</span><span class="punctuation">.</span><span class="variable">text</span><span class="paren">)</span>
+        <span class="variable">else</span><span class="punctuation">:</span>
+            <span class="reserved_words">break</span>
+        <span class="variable">cont</span><span class="smooth_operator">+</span><span class="smooth_operator">=</span><span class="number">1</span>
+    <span class="func_name">print</span><span class="paren">(</span><span class="string">f"Puntos: {puntos}"</span><span class="paren">)</span>
+    <span class="variable">df</span> <span class="smooth_operator">=</span> <span class="variable">pd</span><span class="punctuation">.</span><span class="func_name">DataFrame</span><span class="paren">(</span><span class="keys">{</span><span class="string">'Nombre'</span><span class="punctuation">:</span><span class="variable">equipos</span><span class="punctuation">,</span><span class="string">"Puntos"</span><span class="punctuation">:</span><span class="variable">puntos</span><span class="keys">}</span><span class="punctuation">,</span><span class="variable">index</span><span class="smooth_operator">=</span><span class="func_name">list</span><span class="paren">(</span><span class="func_name">range</span><span class="paren">(</span><span class="number">1</span><span class="punctuation">,</span><span class="number">21</span><span class="paren">)))</span>
+    <span class="variable">df</span><span class="punctuation">.</span><span class="func_name">to_csv</span><span class="paren">(</span><span class="string">'clasificacion.csv'</span><span class="punctuation">,</span><span class="variable">index</span><span class="smooth_operator">=</span><span class="variable">False</span><span class="paren">)</span>
+    <span class="func_name">print</span><span class="paren">(</span><span class="string">"Hecho"</span><span class="paren">)</span>    </pre>
+</body>
+
+</html>

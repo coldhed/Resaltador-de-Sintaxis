@@ -5,7 +5,13 @@
 # Santiago Rodríguez, A01025232
 
 defmodule SyntaxHighlighter do
-  def highlight(inFile, outFile \\ "highlight.html") do
+  def highlightDirectory(dir) do
+    Path.wildcard("#{dir}/*.py")
+    |> Enum.map(&Task.async(fn -> highlight(&1) end))
+    |> Enum.map(&Task.await(&1))
+  end
+
+  def highlight(inFile, outDirectory \\ "output_files/") do
     data =
       inFile
       |> File.stream!()
@@ -31,7 +37,8 @@ defmodule SyntaxHighlighter do
 </body>
 
 </html>]
-    File.write(outFile, "#{prefix}#{data}#{suffix}")
+    [_, fileName] = Regex.run(~r|([a-zA-ZñÑ_\d]+).py|, inFile)
+    File.write("#{outDirectory}#{fileName}.html", "#{prefix}#{data}#{suffix}")
   end
 
   # line takes a string and returns a parsed html string
