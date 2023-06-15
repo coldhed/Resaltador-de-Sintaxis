@@ -9,10 +9,21 @@ A Python syntax highlighter, built in Elixir.
 ```elixir
 SyntaxHighlighter.highlight("test.py")
 ```
-Which will output the highlighted syntax to highlight.html. To specify the output file, you can use:
+Which will output the highlighted syntax to highlight.html. To specify the output file directory, you can use:
 ```elixir
-SyntaxHighlighter.highlight("test.py", "output.html")
+SyntaxHighlighter.highlight("test.py", "myOutput")
 ```
+If you want to highlight a whole directory, you can do the follow command:
+```elixir
+SyntaxHighlighter.highlightDirectory("test_files") 
+```
+Furthermore, if you want to ouptut to another directory, with your own css file to give the syntax your own style, you can do:
+```elixir
+SyntaxHighlighter.highlightDirectory("test_files", "myOutput") 
+```
+
+In both cases - single file or directory - the default output directory will be output_files, for which a custom css file is provided.
+
 
 ### How does it work?
 For all of the lines of the Python file, it uses recursion to search with Regex for the first token from that line, it parses it, and shortens the line by that token until the line is empty and completely parsed. Hence, the algorithm has a time complexity of **O(n)**, where n is the number of tokens of the Python file. This is because  the number of possible tokens to look for in Python is constant, and we search with Regex at the beginning of the line, so the parsing of each token is constant.
